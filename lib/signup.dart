@@ -1,3 +1,4 @@
+import 'package:asr_app/login.dart';
 import 'package:flutter/material.dart';
 
 class Inscription extends StatelessWidget {
@@ -11,7 +12,7 @@ class Inscription extends StatelessWidget {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF4B0082), Color(0xFF800080)],
+            colors: [Color.fromARGB(255, 107, 106, 108), Color.fromARGB(255, 150, 144, 150)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -23,7 +24,7 @@ class Inscription extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(height: 50,),
-            Text("S'inscrire",
+            Text("Inscription",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -35,25 +36,84 @@ class Inscription extends StatelessWidget {
             SizedBox(height: 50,),
             TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person, color: Colors.white,),
-                hintText: "Nom et Prenom",
-                hintStyle: TextStyle(color:Colors.white),
+                prefixIcon: Icon(Icons.person, color: Colors.deepPurple,),
+                hintText: "Firstname",
+                hintStyle: TextStyle(color:Colors.black),
                 filled: true,
                   fillColor: Colors.transparent,
                   border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(color: Colors.deepPurple),
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(color: Colors.deepPurple),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
               ),
             ),
+            SizedBox(height: 50,),
+           TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.person, color: Colors.deepPurple,),
+                hintText: "Surname",
+                hintStyle: TextStyle(color:Colors.black),
+                filled: true,
+                  fillColor: Colors.transparent,
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+              ),
+            ),
+            SizedBox(height: 50,),
+            TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.person, color: Colors.deepPurple,),
+                hintText: "Username",
+                hintStyle: TextStyle(color:Colors.black),
+                filled: true,
+                  fillColor: Colors.transparent,
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.person, color: Colors.deepPurple,),
+                hintText: "Password",
+                hintStyle: TextStyle(color:Colors.black),
+                filled: true,
+                  fillColor: Colors.transparent,
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+              ),
+            ),
+            
              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () { },
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   side: BorderSide(color: Colors.white, width: 2),
@@ -62,7 +122,7 @@ class Inscription extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Se connecter',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
@@ -97,7 +157,7 @@ class Inscription extends StatelessWidget {
                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Inscription()));
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF00CCCC),
+                  backgroundColor: Colors.deepPurple,
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),

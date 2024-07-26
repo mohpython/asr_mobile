@@ -27,11 +27,18 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Story Title',
-          
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(onPressed: (){
+            // Navigator.pop(context);
+          }, icon: Icon(Icons.close,))
+        ],
+        title: Row(
+          children: [
+            Text("Story Title", style: TextStyle(fontSize: 20),)
+          ],
         ),
-        centerTitle: true,
+        
       ),
       body: Stack(
         children: <Widget>[
@@ -42,8 +49,8 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
                 if (isRecording)
                   IconButton(
                     icon: Icon(Icons.stop),
-                    iconSize: 100,
-                    color: Colors.purple,
+                    iconSize: 70,
+                    color: Colors.grey,
                     onPressed: stopRecording,
                   )
                 else if (hasRecording)
@@ -51,13 +58,13 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
                     children: [
                       Card(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 5,
                         child: IconButton(
                           icon: Icon(Icons.mic),
-                          iconSize: 100,
-                          color: Colors.purple,
+                          iconSize: 60,
+                          color: Colors.grey,
                           onPressed: startRecording,
                         ),
                       ),
@@ -66,7 +73,7 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.purple.shade100,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -85,13 +92,13 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
                 else
                   Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     elevation: 5,
                     child: IconButton(
                       icon: Icon(Icons.mic),
-                      iconSize: 100,
-                      color: Colors.purple,
+                      iconSize: 60,
+                      color: Colors.grey,
                       onPressed: startRecording,
                     ),
                   ),
@@ -113,8 +120,8 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
               onPressed: () {
                
               },
-              child: Icon(Icons.send),
-              backgroundColor: Colors.purple,
+              child: Icon(Icons.send_outlined),
+              backgroundColor: Colors.white,
             ),
           ),
         ],

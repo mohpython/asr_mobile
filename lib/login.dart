@@ -11,7 +11,7 @@ class LoginPage extends StatelessWidget {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF4B0082), Color(0xFF800080)],
+            colors: [Color.fromARGB(255, 200, 194, 203), Color.fromARGB(255, 149, 147, 149)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -22,22 +22,22 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 50),
+              SizedBox(height: 30),
               const Text(
                 'Se connecter',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurple,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 30),
               const TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email, color: Colors.white),
-                  hintText: 'Email',
-                  hintStyle: TextStyle(color: Colors.white),
+                  prefixIcon: Icon(Icons.email, color: Colors.deepPurple),
+                  hintText: 'Username',
+                  hintStyle: TextStyle(color: Colors.black),
                   filled: true,
                   fillColor: Colors.transparent,
                   border: UnderlineInputBorder(
@@ -57,9 +57,9 @@ class LoginPage extends StatelessWidget {
               const TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.lock, color: Colors.white),
-                  hintText: 'Mot de passe',
-                  hintStyle: TextStyle(color: Colors.white),
+                  prefixIcon: Icon(Icons.lock, color: Colors.deepPurple),
+                  hintText: 'Password',
+                  hintStyle: TextStyle(color: Colors.black),
                   filled: true,
                   fillColor: Colors.transparent,
                   border: UnderlineInputBorder(
@@ -84,7 +84,7 @@ class LoginPage extends StatelessWidget {
                   },
                   child: const Text(
                     'Mot de passe oublié',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.deepPurple),
                   ),
                 ),
               ),
@@ -136,7 +136,7 @@ class LoginPage extends StatelessWidget {
                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Inscription()));
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF00CCCC),
+                  backgroundColor: Colors.deepPurple,
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
