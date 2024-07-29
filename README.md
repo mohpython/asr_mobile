@@ -15,7 +15,7 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-Sample doc 
+
 BambaraASR is a mobile application designed to help users improve their pronunciation and reading of phrases in the Bambara language. The application allows users to record their voice while reading a phrase displayed on the screen and then receive feedback on their pronunciation.
 
 Key Features
