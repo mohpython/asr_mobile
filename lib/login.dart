@@ -1,4 +1,6 @@
 
+import 'package:asr_app/home.dart';
+
 import 'package:asr_app/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -91,6 +93,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
                  
                 },
                 style: ElevatedButton.styleFrom(

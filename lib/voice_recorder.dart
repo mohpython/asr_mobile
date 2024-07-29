@@ -1,3 +1,4 @@
+import 'package:asr_app/correct_sentences.dart';
 import 'package:flutter/material.dart';
 
 class VoiceRecorder extends StatefulWidget {
@@ -6,6 +7,8 @@ class VoiceRecorder extends StatefulWidget {
 }
 
 class _VoiceRecorderState extends State<VoiceRecorder> {
+  late final int bookId;
+
   bool isRecording = false;
   bool hasRecording = false;
 
@@ -23,22 +26,34 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
     });
   }
 
+  void navigateToNewScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CorrectSentences()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         actions: [
-          IconButton(onPressed: (){
-            // Navigator.pop(context);
-          }, icon: Icon(Icons.close,))
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.close),
+          )
         ],
         title: Row(
           children: [
-            Text("Story Title", style: TextStyle(fontSize: 20),)
+            Text(
+              "Story Title",
+              style: TextStyle(fontSize: 20),
+            )
           ],
         ),
-        
       ),
       body: Stack(
         children: <Widget>[
@@ -107,23 +122,22 @@ class _VoiceRecorderState extends State<VoiceRecorder> {
                 IconButton(
                   icon: Icon(Icons.volume_up),
                   onPressed: () {
-                    
+                    // Add functionality for volume up button
                   },
                 ),
               ],
             ),
           ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-               
-              },
-              child: Icon(Icons.send_outlined),
-              backgroundColor: Colors.white,
+          if (hasRecording)
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                onPressed: navigateToNewScreen,
+                child: Icon(Icons.send_outlined),
+                backgroundColor: Colors.white,
+              ),
             ),
-          ),
         ],
       ),
     );
