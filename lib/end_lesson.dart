@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CorrectSentences extends StatelessWidget {
+  const CorrectSentences({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "Story Title",
           style: TextStyle(color: Colors.black, fontSize: 20),
         ),
@@ -16,7 +18,7 @@ class CorrectSentences extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(Icons.close, color: Colors.black),
+            icon: const Icon(Icons.close, color: Colors.black),
           ),
         ],
       ),
@@ -26,39 +28,39 @@ class CorrectSentences extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 50), 
+              const SizedBox(height: 50),
               Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 elevation: 5,
                 child: IconButton(
-                  icon: Icon(Icons.mic),
+                  icon: const Icon(Icons.mic),
                   iconSize: 60,
                   color: Colors.purple,
                   onPressed: () {},
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Sentence to read Sentence to read with correct pronounced words highlighted",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black, fontSize: 16),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               IconButton(
-                icon: Icon(Icons.volume_up, color: Colors.purple, size: 40),
+                icon: const Icon(Icons.volume_up, color: Colors.purple, size: 40),
                 onPressed: () {},
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.all(10),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.play_arrow, color: Colors.purple),
@@ -70,7 +72,7 @@ class CorrectSentences extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
@@ -82,9 +84,9 @@ class CorrectSentences extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                     ),
-                    child: Text(
+                    child: const Text(
                       "An ka taa",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
