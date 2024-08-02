@@ -24,6 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    compileSdkVersion 34
     namespace = "com.example.asr_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
