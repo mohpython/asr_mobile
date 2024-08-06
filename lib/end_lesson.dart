@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CorrectSentences extends StatelessWidget {
-  const CorrectSentences({super.key});
+class EndLessonScreen extends StatelessWidget {
+  Map<String, dynamic> userdata;
+  String bookTitle;
+
+  EndLessonScreen({super.key, required this.userdata, required this.bookTitle});
 
   @override
   Widget build(BuildContext context) {
