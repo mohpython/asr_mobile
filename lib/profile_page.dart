@@ -26,83 +26,86 @@ class ProfilePageState extends State<ProfilePage> {
         ),
         backgroundColor: Colors.purple.shade50,
       ),
-      body: Container(
-        color: Colors.grey.shade200,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.purple.shade100,
-              child: const Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.purple,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              username,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            Text(
-              '$level XP',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Add functionality to change username
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('Change Username'),
-              style: ElevatedButton.styleFrom(
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          color: Colors.grey.shade200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50,
                 backgroundColor: Colors.purple.shade100,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                child: const Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.purple,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Add functionality to change password
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('Change password'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple.shade100,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+              const SizedBox(height: 20),
+              Text(
+                username,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add functionality to delete account
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+              Text(
+                '$level XP',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
                 ),
               ),
-              child: const Text('Delete Account'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Add functionality to change username
+                },
+                icon: const Icon(Icons.edit),
+                label: const Text('Change Username'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple.shade100,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Add functionality to change password
+                },
+                icon: const Icon(Icons.edit),
+                label: const Text('Change password'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple.shade100,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Add functionality to delete account
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: const Text('Delete Account'),
+              ),
+            ],
+          ),
         ),
-      ),
+    )
     );
   }
 }
