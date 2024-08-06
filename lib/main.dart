@@ -33,6 +33,7 @@ class AuthWrapper extends StatefulWidget {
 
 class AuthWrapperState extends State<AuthWrapper> {
   bool _isLoading = true;
+  bool _isUserDataLoading = false;
   bool _isLoggedIn = false;
   Map<String, dynamic>? _userdata;
 
@@ -49,13 +50,23 @@ class AuthWrapperState extends State<AuthWrapper> {
       _isLoggedIn = isLoggedIn;
       _isLoading = false;
     });
+
+    if (_isLoggedIn) {
+      // Fetch user data if logged in
+      await _getUserData();
+    }
   }
 
   Future<void> _getUserData() async {
-    Map<String, dynamic>? userdata = await SessionManager.getUserData();
+    setState(() {
+      _isUserDataLoading = true;
+    });
+
+    Map<String, dynamic>? response = await SessionManager.getUserData();
 
     setState(() {
-      _userdata = userdata;
+      _userdata = response!["data"];
+      _isUserDataLoading = false;
     });
   }
 
@@ -65,14 +76,16 @@ class AuthWrapperState extends State<AuthWrapper> {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    // If user has already logged in, go directly to HomePage
-    if (_isLoggedIn){
-      _getUserData();
-      if (_userdata != null) {
-        return HomePage(userdata: _userdata!,);
-      }
+    // If confirmation that user is logged in, but user data is still loading, show progress indicator
+    if (_isLoggedIn && _isUserDataLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    // If confirmation that user is logged in and user data is available, go to HomePage
+    if (_isLoggedIn && _userdata != null) {
+      return HomePage(userdata: _userdata!);
     }
     // If not logged in or we cannot retrieve user information go to login page
     return const LoginPage();
   }
 }
+
