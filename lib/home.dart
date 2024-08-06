@@ -1,20 +1,70 @@
-import 'package:asr_app/constant.dart';
-import 'package:asr_app/voice_recorder.dart';
+import 'package:asr_app/constant.dart' show books;
+import 'package:asr_app/lesson_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:asr_app/session.dart';
+import 'package:asr_app/login.dart';
+import 'package:asr_app/profile_page.dart';
 
+class HomePage extends StatefulWidget {
+  Map<String, dynamic> userdata;
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key, required this.userdata});
+
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
+  List<dynamic> inProgressBooks = [];
+  List<String> completedBooks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    inProgressBooks = List<dynamic>.from(widget.userdata['in_progress_books'] ?? []);
+    completedBooks = List<String>.from(widget.userdata['completed_books'] ?? []);
+  }
+
+  void _logout(BuildContext context) async {
+    await SessionManager.logout().then(
+          (none) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      ),
+    );
+  }
+
+  Future<void> openLesson(BuildContext context, String bookTitle) async {
+    // Navigate to LessonScreen and await the result
+    final updatedUserData = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonScreen(
+          userdata: widget.userdata,
+          bookTitle: bookTitle,
+        ),
+      ),
+    );
+
+    // Update userdata if a result is returned
+    if (updatedUserData != null) {
+      widget.userdata = updatedUserData;
+      setState(() {
+        inProgressBooks = updatedUserData['in_progress_books']; // Update local state
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'BambaraASR',
+          'Bako Reading App',
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.purple,
         centerTitle: true,
         leading: Builder(
           builder: (context) => IconButton(
@@ -27,9 +77,10 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.person, color: Colors.black),
-            onPressed: () {
-              
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(
+                builder: (context) => ProfilePage(userData: widget.userdata)
+            ),
+            ),
           ),
         ],
       ),
@@ -41,12 +92,7 @@ class HomePage extends StatelessWidget {
           mainAxisSpacing: 10.0,
           crossAxisSpacing: 10.0,
           children: books.map((book) {
-            return _buildBookButton(
-              context,
-              book['name']!,
-              book['logo']!,
-              book['url']!
-            );
+            return _buildBookButton(context, book['title']!, book['image']!);
           }).toList(),
         ),
       ),
@@ -79,42 +125,48 @@ class HomePage extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Setting'),
+            title: const Text('Settings'),
             onTap: () {
               Navigator.pop(context);
             },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () => _logout(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBookButton(BuildContext context, String label, String logo, String url) {
+  Widget _buildBookButton(BuildContext context, String title, String image) {
+    Color bookColor = Colors.white;
+
+    if (inProgressBooks.any((book) => book.keys.first == title)) {
+      bookColor = Colors.grey.withOpacity(0.5); // Slightly darker for in-progress books
+    } else if (completedBooks.contains(title)) {
+      bookColor = Colors.black.withOpacity(0.5); // Darker for completed books
+    }
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VoiceRecorder(),
-          ),
-        );
-      },
+      onTap: () => openLesson(context, title),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: bookColor,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              logo,
-              width: 60,
-              height: 60,
+              image,
+              width: 100,
+              height: 100,
             ),
             const SizedBox(height: 8.0),
             Text(
-              label,
+              title,
               style: const TextStyle(color: Colors.black, fontSize: 16.0),
             ),
           ],
