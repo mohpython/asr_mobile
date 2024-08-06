@@ -137,13 +137,14 @@ class Inscription extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40,),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.lock, color: Colors.deepPurple,),
-                hintText: "Password",
-                hintStyle: TextStyle(color:Colors.black),
-                filled: true,
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.lock, color: Colors.deepPurple),
+                  hintText: 'Password',
+                  hintStyle: TextStyle(color: Colors.black),
+                  filled: true,
                   fillColor: Colors.transparent,
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -154,8 +155,10 @@ class Inscription extends StatelessWidget {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
+                ),
+                style: const TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
               ),
-            ),
              const SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () => _signup(context, usernameController.text, passwordController.text,
