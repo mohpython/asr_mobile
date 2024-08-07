@@ -3,8 +3,7 @@ import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:asr_app/book.dart' show getBook;
 import 'package:asr_app/bako_api/asr_model.dart' show inferenceASRModel;
-import 'package:asr_app/bako_api/lesson.dart' show bookmark;
-import 'package:asr_app/end_lesson.dart';
+import 'package:asr_app/bako_api/lesson.dart';
 
 class LessonScreen extends StatefulWidget {
   Map<String, dynamic> userdata;
@@ -77,7 +76,11 @@ class LessonScreenState extends State<LessonScreen> {
 
   Future<void> startRecording() async {
     if (await _audioRecorder.hasPermission()) {
-      await _audioRecorder.start();
+      await _audioRecorder.start(
+        encoder: AudioEncoder.wav, // or AudioEncoder.flac
+        bitRate: 128000, // Optional: set bitrate (default value)
+        samplingRate: 44100, // Optional: set sample rate (default value)
+          );
       setState(() {
         isRecording = true;
         hasRecording = false;
@@ -99,16 +102,18 @@ class LessonScreenState extends State<LessonScreen> {
     }
   }
 
-  void sendAudioToASR() {
+  void sendAudioToASR() async {
     // Placeholder for ASR call
     // Example call to ASR model
-    String transcription = inferenceASRModel(_filePath);
-    List<TextSpan> highlightedSpans = getHighlightedTextSpans(transcription);
+    String? transcription = await inferenceASRModel(_filePath!);
+    if (transcription != null) {
+      List<TextSpan> highlightedSpans = getHighlightedTextSpans(transcription);
 
-    setState(() {
-      hasTranscription = true; // Set to true once transcription is processed
-      currentTextSpans = highlightedSpans; // Update state variable
-    });
+      setState(() {
+        hasTranscription = true; // Set to true once transcription is processed
+        currentTextSpans = highlightedSpans; // Update state variable
+      });
+    }
   }
 
   List<TextSpan> getHighlightedTextSpans(String transcription) {
@@ -152,25 +157,43 @@ class LessonScreenState extends State<LessonScreen> {
     });
   }
 
-  void navigateToEndLesson() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EndLessonScreen(
-          userdata: widget.userdata,
-          bookTitle: widget.bookTitle,
-        ),
-      ),
-    );
-  }
-
-  Future<Map<String, dynamic>?> bookmarkCurrentPage() async {
+  Future<void> bookmarkCurrentPageAndExit(BuildContext context) async {
     Map<String, dynamic>? response = await bookmark(widget.userdata['username'],
         widget.bookTitle, 'Page $currentPage');
     if (response != null && response["status"]) {
-      return response["data"];
+      Map<String, dynamic>? updatedUserData = response["data"];
+      Navigator.pop(context, updatedUserData);
     } else {
       // Handle error if book data cannot be retrieved
+    }
+  }
+
+  Future<void> endLesson(BuildContext context) async {
+    Map<String, dynamic>? response = await markBookAsCompleted(widget.userdata["username"], widget.bookTitle);
+    if (response != null && response["status"]){
+      Map<String, dynamic>? updatedUserData = response["data"];
+      int xpGained = updatedUserData!["reader_xp"] - widget.userdata["reader_xp"];
+
+      // Show a dialog to congratulate the user
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Congratulations!'),
+            content: Text('You gained $xpGained XP from this lesson.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // Close the dialog and return to HomeScreen
+                  Navigator.pop(context); // This closes the dialog
+                  Navigator.pop(context, updatedUserData); // This pops the screen
+                },
+                child: const Text('Home'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -188,10 +211,7 @@ class LessonScreenState extends State<LessonScreen> {
         backgroundColor: Colors.purple,
         actions: [
           IconButton(
-            onPressed: () async {
-              await bookmarkCurrentPage().then((Map<String, dynamic>? updatedUserData) =>
-                  Navigator.pop(context, updatedUserData));
-            },
+            onPressed: () => bookmarkCurrentPageAndExit(context),
             icon: const Icon(Icons.bookmark),
           )
         ],
@@ -297,7 +317,7 @@ class LessonScreenState extends State<LessonScreen> {
                 onPressed: hasTranscription ? moveToNextSentence : sendAudioToASR,
                 backgroundColor: Colors.white,
                 child: Text(
-                  hasTranscription ? "Next" : "Send",
+                  hasTranscription ? "An ka taa" : "Send",
                   style: const TextStyle(color: Colors.purple),
                 ),
               ),
@@ -307,7 +327,7 @@ class LessonScreenState extends State<LessonScreen> {
               bottom: 20,
               right: 20,
               child: FloatingActionButton(
-                onPressed: navigateToEndLesson,
+                onPressed: () => endLesson(context),
                 backgroundColor: Colors.white,
                 child: const Text(
                   "End",
