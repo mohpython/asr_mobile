@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:asr_app/session.dart';
 import 'package:asr_app/login.dart';
 import 'package:asr_app/profile_page.dart';
+import 'package:collection/collection.dart' show ListEquality;
 
 class HomePage extends StatefulWidget {
   Map<String, dynamic> userdata;
@@ -27,10 +28,11 @@ class HomePageState extends State<HomePage> {
 
   void _logout(BuildContext context) async {
     await SessionManager.logout().then(
-          (none) => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      ),
+          (none) => Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+                (Route<dynamic> route) => false, // Remove all routes
+          ) // Navigate to LoginPage and clear the stack
     );
   }
 
@@ -49,12 +51,34 @@ class HomePageState extends State<HomePage> {
     // Update userdata if a result is returned
     if (updatedUserData != null) {
       widget.userdata = updatedUserData;
+      const listEquality = ListEquality<dynamic>();
+
       setState(() {
-        inProgressBooks = updatedUserData['in_progress_books']; // Update local state
+        if (!listEquality.equals(inProgressBooks, updatedUserData['in_progress_books'])) {
+          inProgressBooks = updatedUserData['in_progress_books']; // Update local state
+        }
+        if (!listEquality.equals(completedBooks, updatedUserData['completed_books'])) {
+          completedBooks = updatedUserData['completed_books']; // Update local state
+        }
       });
     }
   }
 
+  Future<void> openProfilePage(BuildContext context) async {
+    // Navigate to LessonScreen and await the result
+    final updatedUsername = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ProfilePage(userData: widget.userdata)
+      ),
+    );
+
+    // Update userdata if a result is returned
+    if (updatedUsername != widget.userdata["username"]) {
+      widget.userdata["username"] = updatedUsername;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +101,7 @@ class HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.person, color: Colors.black),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(
-                builder: (context) => ProfilePage(userData: widget.userdata)
-            ),
-            ),
+            onPressed: () => openProfilePage(context),
           ),
         ],
       ),
