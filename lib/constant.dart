@@ -1,6 +1,10 @@
 // This is only usable with android emulated devices running on the same machine than local server
 const String bakoApiUri = 'http://10.0.2.2:8000';
 
+// ASR Model API URI and Authentication token
+const String asrModelApiUri = 'https://tcfqs3chnpo7tvlx.us-east-1.aws.endpoints.huggingface.cloud';
+const String asrModelApiToken = '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';
+
 // We will probably get ride of those for a more scalable approach if application is deployed and maintained
 const List<String> titles = ['A-ABCDaire', 'A-Denmisɛnya Kojuguw', 'A-Donfɛnw', 'A-Kulɔriw', 'B-Anw bɛ Baara Kɛ !', 'B-Baganw', 'B-Bama Miirina',
   'B-Sɔminiminɛnw', 'C-Jate', 'C-Kurun', 'C-Ne ni Mama ka Gafe Kalan', 'C-Ne ni Papa ka Gafe kalan', 'C-Nsbanji', 'C-Ni a tun bɛ se...',
