@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   List<dynamic> inProgressBooks = [];
-  List<String> completedBooks = [];
+  List<dynamic> completedBooks = [];
 
   @override
   void initState() {
