@@ -22,8 +22,8 @@ Future<String?> inferenceASRModel(String filePath) async {
   final apiUrl = Uri.parse(asrModelApiUri);
 
   // Check if the file is .flac or .wav
-  if (!filePath.endsWith('.flac') && !filePath.endsWith('.wav')) {
-    print('Error: The file must be a .flac or .wav format.');
+  if (!filePath.endsWith('.m4a') && !filePath.endsWith('.wav')) {
+    print('Error: The file must be a .m4a or .wav format.');
     return null;
   }
 
@@ -35,7 +35,7 @@ Future<String?> inferenceASRModel(String filePath) async {
   final headers = {
     'Accept': 'application/json',
     'Authorization': 'Bearer $asrModelApiToken',
-    'Content-Type': filePath.endsWith('.wav') ? 'audio/wav' : 'audio/flac',
+    'Content-Type': 'audio/wav',
   };
 
   try {
@@ -49,7 +49,7 @@ Future<String?> inferenceASRModel(String filePath) async {
       return data["text"];
     } else if (response.statusCode == 503){
       print('Error: Service unavailable! Retrying!');
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 5));
       return inferenceASRModel(filePath);
     } else {
       print('Error: ${response.statusCode} - ${response.reasonPhrase}');
