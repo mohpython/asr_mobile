@@ -31,6 +31,7 @@ class LessonScreenState extends State<LessonScreen> {
   bool hasTranscription = false;
   bool lastPage = false;
   List<TextSpan> currentTextSpans = []; // State variable for TextSpans
+  bool _sending = false;
 
   @override
   void initState() {
@@ -60,6 +61,9 @@ class LessonScreenState extends State<LessonScreen> {
 
       String bookMarkAt = bookProgress[widget.bookTitle] ?? 'Page 1';
       currentPage = int.parse(bookMarkAt.split(' ')[1]);
+      if (currentPage == bookData!['content'].keys.length){
+        lastPage = true;
+      }
     } else {
       currentPage = 1;
     }
@@ -84,6 +88,9 @@ class LessonScreenState extends State<LessonScreen> {
       setState(() {
         isRecording = true;
         hasRecording = false;
+        if (hasTranscription){
+          hasTranscription = false;
+        }
       });
     }
   }
@@ -103,8 +110,11 @@ class LessonScreenState extends State<LessonScreen> {
   }
 
   void sendAudioToASR() async {
-    // Placeholder for ASR call
-    // Example call to ASR model
+    // Set loading status to show progress Indicator
+    setState(() {
+      _sending = true;
+    });
+
     String? transcription = await inferenceASRModel(_filePath!);
     if (transcription != null) {
       List<TextSpan> highlightedSpans = getHighlightedTextSpans(transcription);
@@ -112,6 +122,7 @@ class LessonScreenState extends State<LessonScreen> {
       setState(() {
         hasTranscription = true; // Set to true once transcription is processed
         currentTextSpans = highlightedSpans; // Update state variable
+        _sending = false;
       });
     }
   }
@@ -143,11 +154,9 @@ class LessonScreenState extends State<LessonScreen> {
       } else {
         currentSentenceIndex = 0;
         currentPage += 1;
-        if (bookData!['content'].containsKey('Page $currentPage')) {
-          currentSentences =
-          List<String>.from(bookData!['content']['Page $currentPage']);
-          currentSentence = currentSentences[currentSentenceIndex];
-        } else {
+        currentSentences = List<String>.from(bookData!['content']['Page $currentPage']);
+        currentSentence = currentSentences[currentSentenceIndex];
+        if (currentPage == bookData!['content'].keys.length){
           lastPage = true;
         }
       }
@@ -158,9 +167,18 @@ class LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> bookmarkCurrentPageAndExit(BuildContext context) async {
+    // Set loading status to show progress Indicator
+    setState(() {
+      _sending = true;
+    });
+
     Map<String, dynamic>? response = await bookmark(widget.userdata['username'],
         widget.bookTitle, 'Page $currentPage');
     if (response != null && response["status"]) {
+      setState(() {
+        _sending = false;
+      });
+
       Map<String, dynamic>? updatedUserData = response["data"];
       Navigator.pop(context, updatedUserData);
     } else {
@@ -169,14 +187,24 @@ class LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> endLesson(BuildContext context) async {
+    // Set loading status to show progress Indicator
+    setState(() {
+      _sending = true;
+    });
+
     Map<String, dynamic>? response = await markBookAsCompleted(widget.userdata["username"], widget.bookTitle);
     if (response != null && response["status"]){
+      setState(() {
+        _sending = false;
+      });
+
       Map<String, dynamic>? updatedUserData = response["data"];
       int xpGained = updatedUserData!["reader_xp"] - widget.userdata["reader_xp"];
 
       // Show a dialog to congratulate the user
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Congratulations!'),
@@ -224,11 +252,17 @@ class LessonScreenState extends State<LessonScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 if (isRecording)
-                  IconButton(
-                    icon: const Icon(Icons.stop),
-                    iconSize: 70,
-                    color: Colors.grey,
-                    onPressed: stopRecording,
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 5,
+                      child: IconButton(
+                        icon: const Icon(Icons.stop),
+                        iconSize: 60,
+                        color: Colors.grey,
+                        onPressed: stopRecording,
+                      )
                   )
                 else if (hasRecording)
                   Column(
@@ -317,12 +351,12 @@ class LessonScreenState extends State<LessonScreen> {
                 onPressed: hasTranscription ? moveToNextSentence : sendAudioToASR,
                 backgroundColor: Colors.white,
                 child: Text(
-                  hasTranscription ? "An ka taa" : "Send",
+                  hasTranscription ? "Next" : "Send",
                   style: const TextStyle(color: Colors.purple),
                 ),
               ),
             ),
-          if (lastPage && currentSentenceIndex == currentSentences.length - 1)
+          if (lastPage && hasTranscription && currentSentenceIndex == currentSentences.length - 1)
             Positioned(
               bottom: 20,
               right: 20,
@@ -335,6 +369,8 @@ class LessonScreenState extends State<LessonScreen> {
                 ),
               ),
             ),
+          if (_sending)
+            const Center(child: CircularProgressIndicator(),),
         ],
       ),
     );
