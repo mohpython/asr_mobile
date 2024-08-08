@@ -12,6 +12,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  bool _sending = false;
+
   Future<void> _changeUsername(BuildContext context) async {
     TextEditingController newUsernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
@@ -50,8 +52,16 @@ class ProfilePageState extends State<ProfilePage> {
                   return; // Exit the function early
                 }
                 Navigator.of(context).pop();
+
+                // Set loading status to show progress Indicator
+                setState(() {
+                  _sending = true;
+                });
                  await editUsername(widget.userData['username'], newUsernameController.text, passwordController.text,
                  ).then((Map<String, dynamic>? response) {
+                   setState(() {
+                     _sending = false;
+                   });
                   if (response == null) {
                     print("Unsuccessful request");
                   }
@@ -128,8 +138,15 @@ class ProfilePageState extends State<ProfilePage> {
                   return;
                 }
                 Navigator.of(context).pop();
+                // Set loading status to show progress Indicator
+                setState(() {
+                  _sending = true;
+                });
                 await editPassword(widget.userData['username'], currentPasswordController.text, newPasswordController.text,
                 ).then((Map<String, dynamic>? response) {
+                  setState(() {
+                    _sending = false;
+                  });
                   if (response == null) {
                     print("Unsuccessful request");
                   } else if (response["status"]) {
@@ -190,8 +207,15 @@ class ProfilePageState extends State<ProfilePage> {
                   return;
                 }
                 Navigator.of(context).pop();
+                // Set loading status to show progress Indicator
+                setState(() {
+                  _sending = true;
+                });
                 await deleteAccount(widget.userData['username'], passwordController.text,
                 ).then((Map<String, dynamic>? response) {
+                  setState(() {
+                    _sending = false;
+                  });
                   if (response == null) {
                     print("Unsuccessful request");
                   } else if (response["status"]) {
@@ -275,6 +299,8 @@ class ProfilePageState extends State<ProfilePage> {
                   color: Colors.black54,
                 ),
               ),
+              if (_sending)
+                const Center(child: CircularProgressIndicator(),),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: () {
