@@ -16,7 +16,7 @@ Future<Map<String, dynamic>?> getBook(String title) async{
 
   // Find the book with the matching title
   for (var book in booksList) {
-    if (book['title'] == title) {
+    if (book['title'].trim() == title.trim()) {
       return book as Map<String, dynamic>;
     }
   }
