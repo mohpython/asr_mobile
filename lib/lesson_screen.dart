@@ -167,11 +167,21 @@ class LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> bookmarkCurrentPageAndExit(BuildContext context) async {
+    // Avoid unnecessary call for bookmarking
+    if (isInProgress){
+      Map<String, dynamic> bookProgress = widget.userdata['in_progress_books']
+          .firstWhere((book) => book.keys.first == widget.bookTitle);
+      String currentBookmark = bookProgress[widget.bookTitle];
+      if (currentBookmark == 'Page $currentPage'){
+        Navigator.pop(context);
+        return;
+      }
+    }
+
     // Set loading status to show progress Indicator
     setState(() {
       _sending = true;
     });
-
     Map<String, dynamic>? response = await bookmark(widget.userdata['username'],
         widget.bookTitle, 'Page $currentPage');
     if (response != null && response["status"]) {
