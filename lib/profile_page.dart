@@ -51,8 +51,19 @@ class ProfilePageState extends State<ProfilePage> {
                   );
                   return; // Exit the function early
                 }
-                Navigator.of(context).pop();
+                if (newUsernameController.text == widget.userData['username']){
+                  // Show a SnackBar informing that newUsername is equal to username
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("New Username is the same as current username."),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  return;
+                }
 
+                Navigator.of(context).pop();
                 // Set loading status to show progress Indicator
                 setState(() {
                   _sending = true;
@@ -137,6 +148,18 @@ class ProfilePageState extends State<ProfilePage> {
                   );
                   return;
                 }
+                if (newPasswordController.text == currentPasswordController.text){
+                  // Show a SnackBar informing that newPassword is equal to current Password
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("New password is the same as current password."),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  return;
+                }
+
                 Navigator.of(context).pop();
                 // Set loading status to show progress Indicator
                 setState(() {
