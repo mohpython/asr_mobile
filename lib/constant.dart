@@ -2,8 +2,8 @@
 // You will have to change this address in order to test the app on your physical device
 // You can do this by launching the django server with a specific address as parameter and put that address here
 // For example: "python manage.py runserver 192.0.0.1:8000" to launch the django server
-// and bakoApiUri = 'http://192.0.0.1:8000
-const String bakoApiUri = 'http://10.0.2.2:8000';
+// and bakoApiUri = 'http://192.168.0.66:8000
+const String bakoApiUri = 'http://192.168.0.66:8000';
 
 // ASR Model API URI and Authentication token
 const String asrModelApiUri = 'https://tcfqs3chnpo7tvlx.us-east-1.aws.endpoints.huggingface.cloud';
