@@ -22,13 +22,12 @@ class Inscription extends StatelessWidget {
     await createReaderAccount(username, password,
         firstname: firstname, surname: surname).then((Map<String, dynamic>? response) {
               if (response == null) {
-                print("Unsuccessful server resquest");
+                null;
               }
               else if (response["status"]) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()),);
               }
               else if (!response["status"]){
-                print("Login was not successful due to user error ${response["msg"]}");
                 // Show a SnackBar with the message from the server
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

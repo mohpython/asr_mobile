@@ -23,7 +23,6 @@ Future<String?> inferenceASRModel(String filePath) async {
 
   // Check if the file is .flac or .wav
   if (!filePath.endsWith('.m4a') && !filePath.endsWith('.wav')) {
-    print('Error: The file must be a .m4a or .wav format.');
     return null;
   }
 
@@ -48,14 +47,12 @@ Future<String?> inferenceASRModel(String filePath) async {
       final Map<String, dynamic> data = jsonDecode(decodedString);
       return data["text"];
     } else if (response.statusCode == 503){
-      print('Error: Service unavailable! Retrying!');
       await Future.delayed(const Duration(seconds: 5));
       return inferenceASRModel(filePath);
     } else {
-      print('Error: ${response.statusCode} - ${response.reasonPhrase}');
       return null;
     }
   } catch (e) {
-    print('Error sending request: $e');
+    null;
   }
 }

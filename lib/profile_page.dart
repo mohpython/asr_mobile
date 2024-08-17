@@ -74,7 +74,7 @@ class ProfilePageState extends State<ProfilePage> {
                      _sending = false;
                    });
                   if (response == null) {
-                    print("Unsuccessful request");
+                    null;
                   }
                   else if (response["status"]){
                     setState(() {
@@ -84,7 +84,6 @@ class ProfilePageState extends State<ProfilePage> {
                       const SnackBar(content: Text('Username changed successfully!')),
                     );
                   } else if (!response["status"]){
-                    print("Unable to change username ${response["msg"]}");
                     // Show a SnackBar with the message from the server
                     ScaffoldMessenger.of(this.context).showSnackBar(
                       SnackBar(
@@ -171,13 +170,12 @@ class ProfilePageState extends State<ProfilePage> {
                     _sending = false;
                   });
                   if (response == null) {
-                    print("Unsuccessful request");
+                    null;
                   } else if (response["status"]) {
                     ScaffoldMessenger.of(this.context).showSnackBar(
                       const SnackBar(content: Text('Password changed successfully!')),
                     );
                   } else if (!response["status"]) {
-                    print("Unable to change password ${response["msg"]}");
                     ScaffoldMessenger.of(this.context).showSnackBar(
                       SnackBar(
                         content: Text("Unable to change password: ${response["msg"]}"),
@@ -240,7 +238,7 @@ class ProfilePageState extends State<ProfilePage> {
                     _sending = false;
                   });
                   if (response == null) {
-                    print("Unsuccessful request");
+                    null;
                   } else if (response["status"]) {
                     // Navigate to LoginPage and clear the stack
                     Navigator.pushAndRemoveUntil(
@@ -249,7 +247,6 @@ class ProfilePageState extends State<ProfilePage> {
                           (Route<dynamic> route) => false, // Remove all routes
                     );
                   } else if (!response["status"]) {
-                    print("Unable to delete account ${response["msg"]}");
                     ScaffoldMessenger.of(this.context).showSnackBar(
                       SnackBar(
                         content: Text("Unable to delete account: ${response["msg"]}"),

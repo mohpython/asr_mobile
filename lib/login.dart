@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
 
      await loginReaderUser(username, password).then((Map<String, dynamic>? response) {
        if (response == null) {
-         print("Unsuccessful server resquest");
+         null;
        }
        else if (response["status"]) {
          Map<String, dynamic> userdata = response["data"];
@@ -31,7 +31,6 @@ class LoginPage extends StatelessWidget {
          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(userdata: userdata,)),);
        }
        else if (!response["status"]){
-         print("Login was not successful due to user error ${response["msg"]}");
          // Show a SnackBar with the message from the server
          ScaffoldMessenger.of(context).showSnackBar(
            SnackBar(
