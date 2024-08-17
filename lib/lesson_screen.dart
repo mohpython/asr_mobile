@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:asr_app/book.dart' show getBook;
 import 'package:asr_app/bako_api/asr_model.dart' show inferenceASRModel;
 import 'package:asr_app/bako_api/lesson.dart';
+import 'package:time/time.dart';
 
 class LessonScreen extends StatefulWidget {
   Map<String, dynamic> userdata;
@@ -19,19 +20,25 @@ class LessonScreenState extends State<LessonScreen> {
   final Record _audioRecorder = Record();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  // State changing variables
   bool isRecording = false;
   bool hasRecording = false;
+  bool isInProgress = false;
+  bool hasTranscription = false;
+  bool lastPage = false;
+  bool _sending = false;
+  // lessonScreen components variables
   String? _filePath;
   Map<String, dynamic>? bookData;
   List<String> currentSentences = [];
   int currentPage = 0;
   int currentSentenceIndex = 0;
   String currentSentence = '';
-  bool isInProgress = false;
-  bool hasTranscription = false;
-  bool lastPage = false;
   List<TextSpan> currentTextSpans = []; // State variable for TextSpans
-  bool _sending = false;
+  // Duration measurement variables
+  int readingTime = 0; // Time passed on this book
+  DateTime? startTime;
+
 
   @override
   void initState() {
@@ -64,6 +71,8 @@ class LessonScreenState extends State<LessonScreen> {
       if (currentPage == bookData!['content'].keys.length){
         lastPage = true;
       }
+      // Set reading time
+      readingTime = bookProgress["reading_time"] ?? 0;
     } else {
       currentPage = 1;
     }
@@ -76,6 +85,7 @@ class LessonScreenState extends State<LessonScreen> {
 
     // Initialize currentTextSpans with the current sentence
     currentTextSpans = [TextSpan(text: currentSentence)];
+    startTime = DateTime.now();
   }
 
   Future<void> startRecording() async {
@@ -177,13 +187,16 @@ class LessonScreenState extends State<LessonScreen> {
         return;
       }
     }
+    // Calculate duration
+    Duration duration = DateTime.now().difference(startTime!);
+    readingTime = readingTime + duration.inSeconds;
 
     // Set loading status to show progress Indicator
     setState(() {
       _sending = true;
     });
     Map<String, dynamic>? response = await bookmark(widget.userdata['username'],
-        widget.bookTitle, 'Page $currentPage');
+        widget.bookTitle, 'Page $currentPage', readingTime);
     if (response != null && response["status"]) {
       setState(() {
         _sending = false;
@@ -197,12 +210,17 @@ class LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> endLesson(BuildContext context) async {
+    // Calculate duration
+    Duration duration = DateTime.now().difference(startTime!);
+    readingTime = readingTime + duration.inSeconds;
+    int readingTimeInMinutes = readingTime.seconds.inMinutes;
+
     // Set loading status to show progress Indicator
     setState(() {
       _sending = true;
     });
 
-    Map<String, dynamic>? response = await markBookAsCompleted(widget.userdata["username"], widget.bookTitle);
+    Map<String, dynamic>? response = await markBookAsCompleted(widget.userdata["username"], widget.bookTitle, readingTimeInMinutes);
     if (response != null && response["status"]){
       setState(() {
         _sending = false;
@@ -210,6 +228,11 @@ class LessonScreenState extends State<LessonScreen> {
 
       Map<String, dynamic>? updatedUserData = response["data"];
       int xpGained = updatedUserData!["reader_xp"] - widget.userdata["reader_xp"];
+      int totalBookWordCount = bookData!["content"].values
+          .expand((pageContent) => pageContent as Iterable<dynamic>) // Flatten the lists of sentences into a single Iterable<String>
+          .map((sentence) => sentence.split(' ').length) // Get word count for each sentence
+          .reduce((sum, count) => sum + count); // Sum up the word counts
+      double wordPerMin = totalBookWordCount / readingTimeInMinutes;
 
       // Show a dialog to congratulate the user
       showDialog(
@@ -218,7 +241,7 @@ class LessonScreenState extends State<LessonScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Congratulations!'),
-            content: Text('You gained $xpGained XP from this lesson.'),
+            content: Text('You gained $xpGained XP from this lesson. The book was completed in $readingTimeInMinutes minutes, with an average reading speed of $wordPerMin words per minute.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -226,7 +249,10 @@ class LessonScreenState extends State<LessonScreen> {
                   Navigator.pop(context); // This closes the dialog
                   Navigator.pop(context, updatedUserData); // This pops the screen
                 },
-                child: const Text('Home'),
+                child: const Icon(
+                    Icons.home,
+                  color: Colors.purple,
+                ),
               ),
             ],
           );
@@ -360,10 +386,10 @@ class LessonScreenState extends State<LessonScreen> {
               child: FloatingActionButton(
                 onPressed: hasTranscription ? moveToNextSentence : sendAudioToASR,
                 backgroundColor: Colors.white,
-                child: Text(
-                  hasTranscription ? "Next" : "Send",
-                  style: const TextStyle(color: Colors.purple),
-                ),
+                child: Icon(
+                    hasTranscription ? Icons.next_plan : Icons.send,
+                    color: Colors.purple,
+                  ),
               ),
             ),
           if (lastPage && hasTranscription && currentSentenceIndex == currentSentences.length - 1)
@@ -373,10 +399,10 @@ class LessonScreenState extends State<LessonScreen> {
               child: FloatingActionButton(
                 onPressed: () => endLesson(context),
                 backgroundColor: Colors.white,
-                child: const Text(
-                  "End",
-                  style: TextStyle(color: Colors.purple),
-                ),
+                child: const Icon(
+                    Icons.last_page,
+                  color: Colors.purple,
+                )
               ),
             ),
           if (_sending)
