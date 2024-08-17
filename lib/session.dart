@@ -55,3 +55,63 @@ class SessionManager {
     prefs.setBool(_isLoggedInKey, false);
   }
 }
+
+/// Stores the list of model transcription accuracies values as strings in the SharedPreferences.
+///
+/// This function converts a `List<double>` into a `List<String>` and saves it in
+/// SharedPreferences. This is necessary because SharedPreferences does not directly support
+/// storing lists of doubles.
+///
+/// Parameters:
+/// - `key` (String): The key under which the list of accuracies will be stored.
+/// - `accuracies` (List<double>): The list of transcription accuracies to be stored.
+///
+/// Returns:
+/// - `Future<void>`: A Future that completes when the data has been stored.
+Future<void> storeAccuracies(String key, List<double> accuracies) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Convert List<double> to List<String>
+  List<String> stringList = accuracies.map((double value) => value.toString()).toList();
+  // Store the List<String> in SharedPreferences
+  await prefs.setStringList(key, stringList);
+}
+
+/// Retrieves the list of model transcription accuracies values from SharedPreferences.
+///
+/// This function fetches a `List<String>` from SharedPreferences and converts it back
+/// to a `List<double>`. If the key does not exist in SharedPreferences, it returns an
+/// empty list.
+///
+/// Parameters:
+/// - `key` (String): The key under which the list of accuracies is stored.
+///
+/// Returns:
+/// - `Future<List<double>>`: A Future that completes with the retrieved list of doubles
+///   or an empty list if the key does not exist.
+Future<List<double>> getAccuracies(String key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Retrieve the List<String> from SharedPreferences
+  List<String>? stringList = prefs.getStringList(key);
+
+  // Convert List<String> back to List<double>
+  if (stringList != null) {
+    return stringList.map((String value) => double.parse(value)).toList();
+  } else {
+    // Return an empty list if the key doesn't exist
+    return [];
+  }
+}
+
+/// Deletes the stored list of accuracies from SharedPreferences.
+///
+/// Parameters:
+/// - `key`: The key associated with the list of accuracies to delete. (Usually bookTitle)
+///
+/// Returns a `Future<void>` indicating the completion of the deletion process.
+Future<void> deleteAccuracies(String key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Remove the list of accuracies associated with the key
+  await prefs.remove(key);
+}

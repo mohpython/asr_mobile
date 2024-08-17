@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -5,6 +6,7 @@ import 'package:asr_app/book.dart' show getBook;
 import 'package:asr_app/bako_api/asr_model.dart' show inferenceASRModel;
 import 'package:asr_app/bako_api/lesson.dart';
 import 'package:time/time.dart';
+import 'package:asr_app/session.dart' show storeAccuracies, getAccuracies, deleteAccuracies;
 
 class LessonScreen extends StatefulWidget {
   Map<String, dynamic> userdata;
@@ -38,6 +40,8 @@ class LessonScreenState extends State<LessonScreen> {
   // Duration measurement variables
   int readingTime = 0; // Time passed on this book
   DateTime? startTime;
+  // Other variables
+  List<double> accuracies = [];
 
 
   @override
@@ -53,6 +57,9 @@ class LessonScreenState extends State<LessonScreen> {
         bookData = response;
         setupInitialPageAndSentence();
       });
+      if (isInProgress){
+        accuracies = await getAccuracies(widget.bookTitle);
+      }
     } else {
       // Handle error if book data cannot be retrieved
     }
@@ -140,11 +147,15 @@ class LessonScreenState extends State<LessonScreen> {
   List<TextSpan> getHighlightedTextSpans(String transcription) {
     List<String> originalWords = currentSentence.split(' ');
     List<String> transcribedWords = transcription.split(' ');
+    int correctWordCount = 0;
 
     // Highlighting logic
     List<TextSpan> highlightedSpans = [];
     for (var word in originalWords) {
       bool isCorrect = transcribedWords.contains(word);
+      if (isCorrect) {
+        correctWordCount++;
+      }
       highlightedSpans.add(TextSpan(
         text: '$word ',
         style: TextStyle(
@@ -152,6 +163,8 @@ class LessonScreenState extends State<LessonScreen> {
         ),
       ));
     }
+    // Add correct words percentage to the list of Accuracies
+    accuracies.add(correctWordCount / originalWords.length);
 
     return highlightedSpans;
   }
@@ -190,6 +203,8 @@ class LessonScreenState extends State<LessonScreen> {
     // Calculate duration
     Duration duration = DateTime.now().difference(startTime!);
     readingTime = readingTime + duration.inSeconds;
+    // Save accuracies
+    storeAccuracies(widget.bookTitle, accuracies);
 
     // Set loading status to show progress Indicator
     setState(() {
@@ -228,11 +243,17 @@ class LessonScreenState extends State<LessonScreen> {
 
       Map<String, dynamic>? updatedUserData = response["data"];
       int xpGained = updatedUserData!["reader_xp"] - widget.userdata["reader_xp"];
+      // Calculate total word count of the book
       int totalBookWordCount = bookData!["content"].values
           .expand((pageContent) => pageContent as Iterable<dynamic>) // Flatten the lists of sentences into a single Iterable<String>
           .map((sentence) => sentence.split(' ').length) // Get word count for each sentence
           .reduce((sum, count) => sum + count); // Sum up the word counts
-      double wordPerMin = totalBookWordCount / readingTimeInMinutes;
+      // Calculate reading speed
+      String wordPerMin = (totalBookWordCount / readingTimeInMinutes).toStringAsFixed(2);
+      // Calculate average accuracy
+      String averageAcc = ((accuracies.sum / accuracies.length) * 100).toStringAsFixed(2);
+      // Delete accuracy list in shared_preferences
+      deleteAccuracies(widget.bookTitle);
 
       // Show a dialog to congratulate the user
       showDialog(
@@ -241,7 +262,8 @@ class LessonScreenState extends State<LessonScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Congratulations!'),
-            content: Text('You gained $xpGained XP from this lesson. The book was completed in $readingTimeInMinutes minutes, with an average reading speed of $wordPerMin words per minute.'),
+            content: Text('You gained $xpGained XP from this lesson. The book was completed in $readingTimeInMinutes minutes, '
+                'with an average reading speed of $wordPerMin words per minute and an average accuracy of $averageAcc'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
