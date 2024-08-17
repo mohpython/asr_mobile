@@ -164,10 +164,10 @@ class HomePageState extends State<HomePage> {
   Widget _buildBookButton(BuildContext context, String title, String image) {
     Color bookColor = Colors.white;
 
-    if (inProgressBooks.any((book) => book.keys.first == title)) {
-      bookColor = Colors.grey.withOpacity(0.5); // Slightly darker for in-progress books
-    } else if (completedBooks.contains(title)) {
+    if (completedBooks.contains(title)) {
       bookColor = Colors.black.withOpacity(0.5); // Darker for completed books
+    } else if (inProgressBooks.any((book) => book.keys.first == title)) {
+      bookColor = Colors.grey.withOpacity(0.5); // Slightly darker for in-progress books
     }
 
     return GestureDetector(
