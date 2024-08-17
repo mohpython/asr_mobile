@@ -45,6 +45,8 @@ dependencies:
   record: ^4.4.4
   # Add collection as dependency
   collection: ^1.18.0
+  # Add time to dependencies
+  time: ^2.1.4
 
 dev_dependencies:
   flutter_test:
