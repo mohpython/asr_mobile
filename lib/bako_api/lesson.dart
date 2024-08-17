@@ -11,10 +11,11 @@ import 'package:asr_app/constant.dart' show bakoApiUri;
 /// - `username`: The username of the account.
 /// - `bookTitle`: The title of the book to bookmark.
 /// - `bookPageRef`: The reference to the specific page in the book.
+/// - `readingTime`: (Optional) The time taken to read the book (in seconds).
 ///
 /// Returns a `Map<String, dynamic>?` containing the server's response data
 /// if the bookmark is successfully created, or `null` otherwise.
-Future<Map<String, dynamic>?> bookmark(String username, String bookTitle, String bookPageRef) async {
+Future<Map<String, dynamic>?> bookmark(String username, String bookTitle, String bookPageRef, int readingTime) async {
   final response = await http.post(
     Uri.parse('$bakoApiUri/bookmark/'),
     headers: {'Content-Type': 'application/json'},
@@ -22,6 +23,7 @@ Future<Map<String, dynamic>?> bookmark(String username, String bookTitle, String
       'username': username,
       'book_title': bookTitle,
       'book_page_ref': bookPageRef,
+      'reading_time': readingTime,
     }),
   );
 
@@ -43,11 +45,11 @@ Future<Map<String, dynamic>?> bookmark(String username, String bookTitle, String
 /// - `username`: The username of the account.
 /// - `bookTitle`: The title of the book to mark as completed.
 /// - `numErrors`: (Optional) The number of errors made during reading.
-/// - `readingTime`: (Optional) The time taken to read the book.
+/// - `readingTime`: (Optional) The time taken to read the book (in minutes).
 ///
 /// Returns a `Map<String, dynamic>?` containing the server's response data
 /// if the book is successfully marked as completed, or `null` otherwise.
-Future<Map<String, dynamic>?> markBookAsCompleted(String username, String bookTitle, {int? numErrors, double? readingTime}) async {
+Future<Map<String, dynamic>?> markBookAsCompleted(String username, String bookTitle, int readingTime, {int? numErrors}) async {
   final response = await http.post(
     Uri.parse('$bakoApiUri/book_completed/'),
     headers: {'Content-Type': 'application/json'},
